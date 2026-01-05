@@ -36,6 +36,7 @@ func Login(c *gin.Context) {
 		} else {
 
 			token, _ := utils.GenerateJWT(user.Email)
+			roleDto, _ := GetRolName(user.Id)
 
 			c.JSON(200, gin.H{
 				"id":          user.Id,
@@ -44,7 +45,7 @@ func Login(c *gin.Context) {
 				"email":       user.Email,
 				"mobile":      user.Mobile,
 				"username":    user.Username,
-				"roles":       user.Roles,
+				"roles":       roleDto.Name,
 				"isactivated": user.Isactivated,
 				"isblocked":   user.Isblocked,
 				"userpic":     user.Userpicture,
@@ -72,4 +73,19 @@ func GetUserInfo(userName string) (*dto.Users, error) {
 		return nil, result.Error
 	}
 	return &user, nil
+}
+
+func GetRolName(id string) (*dto.Roles, error) {
+	var roles dto.Roles
+
+	db := config.Connection()
+	result := db.Where("id = ?", id).Find(&roles)
+
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return nil, nil // Role not found
+		}
+		return nil, result.Error
+	}
+	return &roles, nil
 }
