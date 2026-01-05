@@ -42,9 +42,12 @@ func Register(c *gin.Context) {
 		Mobile:    user.Mobile,
 		Username:  user.Username,
 		Password:  hashPwd,
+		Roles:     []models.Role{{ID: 2}},
 	}
+
 	res := db.Create(&userModel)
 	rec := res.RowsAffected
+
 	if rec > 0 {
 		c.JSON(200, gin.H{"message": "Registration Successfull, please login now."})
 

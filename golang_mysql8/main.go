@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log" // built-in package for HTTP status codes
+	"src/golang_mysql8/config"
 	"src/golang_mysql8/middleware"
 	auth "src/golang_mysql8/middleware/auth"
 	products "src/golang_mysql8/middleware/products"
@@ -16,7 +17,7 @@ import (
 )
 
 func init() {
-	// config.Connection()
+	config.Connection()
 	err1 := godotenv.Load(".env")
 	if err1 != nil {
 		log.Fatalf("Error loading .env file")

@@ -20,8 +20,8 @@ func Connection() *gorm.DB {
 	}
 
 	fmt.Println("connected to mysql database.")
-
-	err = DB.AutoMigrate(&models.User{}, &models.Product{})
+	// db.AutoMigrate(&User{}, &Role{})
+	err = DB.AutoMigrate(&models.User{}, &models.Role{}, &models.Product{})
 	if err != nil {
 		log.Fatalf("Failed to auto migrate database: %v", err)
 	}
