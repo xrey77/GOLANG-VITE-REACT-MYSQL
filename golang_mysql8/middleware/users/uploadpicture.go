@@ -11,6 +11,16 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// @Summary Update user profile picture
+// @Description Upload user picture
+// @Tags User
+// @Accept multipart/form-data
+// @Produce json
+// @Security BearerAuth
+// @Param id path int true "User Id"
+// @Param userpic formData file true "New Profile Picture"
+// @Success 200 {object} map[string]interface{}
+// @Router /api/uploadpicture/{id} [patch]
 func UploadPicture(c *gin.Context) {
 	id := c.Param("id")
 	user, err := utils.GetByUserId(id)

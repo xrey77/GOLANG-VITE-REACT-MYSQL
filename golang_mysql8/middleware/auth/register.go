@@ -1,8 +1,6 @@
 package middleware
 
 import (
-	"encoding/json"
-	"log"
 	"src/golang_mysql8/config"
 	"src/golang_mysql8/dto"
 	"src/golang_mysql8/models"
@@ -11,13 +9,22 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// @Summary User Registration
+// @Description Create User Account
+// @Tags Auth
+// @Accept json
+// @Produce json
+// @Param login body dto.UserRegister true "Account Registration"
+// @Success 200 {array} dto.UserRegister
+// @Router /auth/signup [post]
 func Register(c *gin.Context) {
 	var user dto.UserRegister
-	err := json.NewDecoder(c.Request.Body).Decode(&user)
 
-	if err != nil {
-		log.Fatalf("Unable to decode the request body.  %v", err)
+	if err := c.ShouldBindJSON(&user); err != nil {
+		c.JSON(400, gin.H{"message": "Invalid request format"})
+		return
 	}
+
 	plainPwd := user.Password
 	hashPwd, _ := utils.HashPassword(plainPwd)
 

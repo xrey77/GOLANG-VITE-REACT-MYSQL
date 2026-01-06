@@ -10,6 +10,15 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// @Summary Products Wild Cards Search
+// @Description Product Search with pagination
+// @Tags Products
+// @Accept json
+// @Produce json
+// @Param page path int true "Page number"
+// @Param key path string true "Key string"
+// @Success 200 {array} dto.Products
+// @Router /products/search/{page}/{key} [get]
 func ProductSearch(c *gin.Context) {
 	page := c.Param("page")
 	key := c.Param("key")

@@ -1,8 +1,6 @@
 package middleware
 
 import (
-	"encoding/json"
-	"log"
 	"net/http"
 	"src/golang_mysql8/config"
 	"src/golang_mysql8/dto"
@@ -11,15 +9,25 @@ import (
 	"github.com/pquerna/otp/totp"
 )
 
+// @Summary MFA TOTP Verification
+// @Description Multi-Factor Authenticator, OTP verification
+// @Tags MultiFactor Authenticator
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param id path int true "User Id"
+// @Param body body dto.MfaKeys true "Enter OTP Code"
+// @Success 200 {array} dto.Users
+// @Router /api/mfa/verifytotp/{id} [patch]
 func MfaVerifyotp(c *gin.Context) {
 	id := c.Param("id")
 
 	var mfa dto.MfaKeys
-	err1 := json.NewDecoder(c.Request.Body).Decode(&mfa)
-
-	if err1 != nil {
-		log.Fatalf("Unable to decode the request body.  %v", err1)
+	if err := c.ShouldBindJSON(&mfa); err != nil {
+		c.JSON(400, gin.H{"message": "Invalid request format"})
+		return
 	}
+
 	db := config.Connection()
 	var users []dto.Users
 	user := db.Where("id = ?", id).Find(&users)
@@ -47,13 +55,5 @@ func MfaVerifyotp(c *gin.Context) {
 	} else {
 		c.JSON(400, gin.H{"message": "User ID not found."})
 	}
-
-	// var req OTPRequest
-	// if err := c.ShouldBindJSON(&req); err != nil {
-	// 	c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-	// 	return
-	// }
-
-	// totp.Validate checks if the provided OTP is currently valid within the time step (usually 30s)
 
 }

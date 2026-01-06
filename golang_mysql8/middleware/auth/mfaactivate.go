@@ -16,6 +16,16 @@ import (
 	qrcode "github.com/skip2/go-qrcode"
 )
 
+// @Summary MFA Activation
+// @Description Multi-Factor Authenticator
+// @Tags MultiFactor Authenticator
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param id path int true "User Id"
+// @Param body body dto.MfaActivation true "Enable MFA"
+// @Success 200 {array} dto.MfaActivation
+// @Router /api/mfa/activate/{id} [patch]
 func MfaActivate(c *gin.Context) {
 	id := c.Param("id")
 	var user dto.MfaActivation

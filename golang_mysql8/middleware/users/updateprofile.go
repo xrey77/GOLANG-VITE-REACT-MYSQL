@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"encoding/json"
 	"src/golang_mysql8/config"
 	"src/golang_mysql8/dto"
 	"src/golang_mysql8/models"
@@ -10,14 +9,22 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// @Summary User Profile Update
+// @Description This will update user profile
+// @Tags User
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param id path int true "User Id"
+// @Param body body dto.ProfileData true "New Profile Details"
+// @Success 200 {array} dto.ProfileData
+// @Router /api/updateprofile/{id} [patch]
 func UpdateProfile(c *gin.Context) {
 	id := c.Param("id")
 	var userDto dto.ProfileData
-	err := json.NewDecoder(c.Request.Body).Decode(&userDto)
-
-	if err != nil {
-		c.JSON(400, gin.H{
-			"message": "Unable to decode the request body."})
+	if err := c.ShouldBindJSON(&userDto); err != nil {
+		c.JSON(400, gin.H{"message": "Invalid request format"})
+		return
 	}
 
 	user, err := utils.GetByUserId(id)

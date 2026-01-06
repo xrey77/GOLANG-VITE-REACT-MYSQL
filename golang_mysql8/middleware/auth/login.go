@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"encoding/json"
 	"errors"
 	"src/golang_mysql8/config"
 	"src/golang_mysql8/dto"
@@ -12,31 +11,45 @@ import (
 	"gorm.io/gorm"
 )
 
+// @Summary User Login
+// @Description Authenticat User
+// @Tags Auth
+// @Accept json
+// @Produce json
+// @Param login body dto.UserLogin true "User Login Credentials"
+// @Success 200 {array} dto.UserLogin
+// @Router /auth/signin [post]
 func Login(c *gin.Context) {
 	var userDto dto.UserLogin
-	err := json.NewDecoder(c.Request.Body).Decode(&userDto)
+	// err := json.NewDecoder(c.Request.Body).Decode(&userDto)
 
-	if err != nil {
-		c.JSON(400, gin.H{
-			"message": "Unable to decode the request body."})
+	if err := c.ShouldBindJSON(&userDto); err != nil {
+		c.JSON(400, gin.H{"message": "Invalid request format"})
+		return
 	}
+
 	plainPwd := userDto.Password
 	user, err := GetUserInfo(userDto.Username)
 	if err != nil {
-		c.JSON(400, gin.H{
-			"message": err.Error()})
+		c.JSON(400, gin.H{"message": err.Error()})
 		return
 	}
+
 	if user.Username != "" {
+
 		hashPwd := user.Password
 		err := bcrypt.CompareHashAndPassword([]byte(hashPwd), []byte(plainPwd))
 		if err != nil {
-			c.JSON(400, gin.H{
-				"message": "Invalid Password."})
+			c.JSON(400, gin.H{"message": "Invalid Password."})
+			return
 		} else {
 
 			token, _ := utils.GenerateJWT(user.Email)
 			roleDto, _ := GetRolName(user.Id)
+			var rolesName string
+			if roleDto != nil {
+				rolesName = roleDto.Name
+			}
 
 			c.JSON(200, gin.H{
 				"id":          user.Id,
@@ -45,7 +58,7 @@ func Login(c *gin.Context) {
 				"email":       user.Email,
 				"mobile":      user.Mobile,
 				"username":    user.Username,
-				"roles":       roleDto.Name,
+				"roles":       rolesName,
 				"isactivated": user.Isactivated,
 				"isblocked":   user.Isblocked,
 				"userpic":     user.Userpicture,
@@ -55,7 +68,7 @@ func Login(c *gin.Context) {
 		}
 
 	} else {
-		c.JSON(200, gin.H{
+		c.JSON(404, gin.H{
 			"message": "Username not found, please register."})
 	}
 }

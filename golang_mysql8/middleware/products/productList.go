@@ -10,6 +10,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// @Summary Product Listings
+// @Description Products Pagination
+// @Tags Products
+// @Accept json
+// @Produce json
+// @Param page path int true "Page number"
+// @Success 200 {array} []dto.Products
+// @Router /products/list/:page [get]
 func ProductList(c *gin.Context) {
 	page := c.Param("page")
 	perPage := 5

@@ -2,22 +2,31 @@ package main
 
 import (
 	"fmt"
-	"log" // built-in package for HTTP status codes
-	"src/golang_mysql8/config"
-	"src/golang_mysql8/middleware"
-	auth "src/golang_mysql8/middleware/auth"
-	products "src/golang_mysql8/middleware/products"
-	users "src/golang_mysql8/middleware/users"
+	"log"
 	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/contrib/static"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+
+	_ "src/golang_mysql8/docs"
+	"src/golang_mysql8/middleware"
+	auth "src/golang_mysql8/middleware/auth"
+	products "src/golang_mysql8/middleware/products"
+	users "src/golang_mysql8/middleware/users"
+
+	swaggerFiles "github.com/swaggo/files"
+	// Add the closing quote and full path below
+	_ "src/golang_mysql8/docs" // Side-effect import for generated docs
+
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
+// Add this line
+
 func init() {
-	config.Connection()
+	// config.Connection()
 	err1 := godotenv.Load(".env")
 	if err1 != nil {
 		log.Fatalf("Error loading .env file")
@@ -25,11 +34,21 @@ func init() {
 
 }
 
+// @title BARCLAYS BANK API Management
+// @version 1.0
+// @description REST API Documentation Gin server.
+// @host localhost:5000
+// @BasePath /
+
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
+// @description Type "Bearer" followed by a space and your token.
 func main() {
 
 	gin.SetMode(gin.ReleaseMode)
 	router := gin.Default()
-
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	router.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"*"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD"},

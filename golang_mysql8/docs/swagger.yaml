@@ -1,0 +1,415 @@
+basePath: /
+definitions:
+  dto.ChangePassword:
+    properties:
+      password:
+        type: string
+    required:
+    - password
+    type: object
+  dto.MfaActivation:
+    properties:
+      TwoFactorEnabled:
+        type: boolean
+    type: object
+  dto.MfaKeys:
+    properties:
+      otp:
+        type: string
+    type: object
+  dto.Products:
+    properties:
+      alertstocks:
+        type: string
+      category:
+        type: string
+      costprice:
+        type: string
+      criticalstocks:
+        type: string
+      descriptions:
+        type: string
+      id:
+        type: string
+      productpicture:
+        type: string
+      qty:
+        type: string
+      saleprice:
+        type: string
+      sellprice:
+        type: string
+      unit:
+        type: string
+    type: object
+  dto.ProfileData:
+    properties:
+      firstname:
+        type: string
+      lastname:
+        type: string
+      mobile:
+        type: string
+    type: object
+  dto.UserLogin:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  dto.UserRegister:
+    properties:
+      email:
+        type: string
+      firstname:
+        type: string
+      lastname:
+        type: string
+      mobile:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  dto.Users:
+    properties:
+      email:
+        type: string
+      firstname:
+        type: string
+      id:
+        type: string
+      isactivated:
+        type: string
+      isblocked:
+        type: string
+      lastname:
+        type: string
+      mailtoken:
+        type: string
+      mobile:
+        type: string
+      password:
+        type: string
+      qrcodeurl:
+        type: string
+      roles:
+        type: string
+      secret:
+        type: string
+      username:
+        type: string
+      userpicture:
+        type: string
+    type: object
+host: localhost:5000
+info:
+  contact: {}
+  description: REST API Documentation Gin server.
+  title: BARCLAYS BANK API Management
+  version: "1.0"
+paths:
+  /api/changepassword/{id}:
+    patch:
+      consumes:
+      - application/json
+      description: User Change Password
+      parameters:
+      - description: User Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: New Password Details
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.ChangePassword'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ChangePassword'
+      security:
+      - BearerAuth: []
+      summary: Change User Password
+      tags:
+      - User
+  /api/getallusers:
+    get:
+      description: Display all users
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.Users'
+            type: array
+      security:
+      - BearerAuth: []
+      summary: Retrieve users
+      tags:
+      - User
+  /api/getuserid/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a single user's details
+      parameters:
+      - description: User Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.Users'
+      security:
+      - BearerAuth: []
+      summary: Get user by ID
+      tags:
+      - User
+  /api/mfa/activate/{id}:
+    patch:
+      consumes:
+      - application/json
+      description: Multi-Factor Authenticator
+      parameters:
+      - description: User Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Enable MFA
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.MfaActivation'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.MfaActivation'
+            type: array
+      security:
+      - BearerAuth: []
+      summary: MFA Activation
+      tags:
+      - MultiFactor Authenticator
+  /api/mfa/verifytotp/{id}:
+    patch:
+      consumes:
+      - application/json
+      description: Multi-Factor Authenticator, OTP verification
+      parameters:
+      - description: User Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Enter OTP Code
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.MfaKeys'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.Users'
+            type: array
+      security:
+      - BearerAuth: []
+      summary: MFA TOTP Verification
+      tags:
+      - MultiFactor Authenticator
+  /api/updateprofile/{id}:
+    patch:
+      consumes:
+      - application/json
+      description: This will update user profile
+      parameters:
+      - description: User Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: New Profile Details
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.ProfileData'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.ProfileData'
+            type: array
+      security:
+      - BearerAuth: []
+      summary: User Profile Update
+      tags:
+      - User
+  /api/uploadpicture/{id}:
+    patch:
+      consumes:
+      - multipart/form-data
+      description: Upload user picture
+      parameters:
+      - description: User Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: New Profile Picture
+        in: formData
+        name: userpic
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Update user profile picture
+      tags:
+      - User
+  /auth/signin:
+    post:
+      consumes:
+      - application/json
+      description: Authenticat User
+      parameters:
+      - description: User Login Credentials
+        in: body
+        name: login
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UserLogin'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.UserLogin'
+            type: array
+      summary: User Login
+      tags:
+      - Auth
+  /auth/signup:
+    post:
+      consumes:
+      - application/json
+      description: Create User Account
+      parameters:
+      - description: Account Registration
+        in: body
+        name: login
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UserRegister'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.UserRegister'
+            type: array
+      summary: User Registration
+      tags:
+      - Auth
+  /products/list/:page:
+    get:
+      consumes:
+      - application/json
+      description: Products Pagination
+      parameters:
+      - description: Page number
+        in: path
+        name: page
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              items:
+                $ref: '#/definitions/dto.Products'
+              type: array
+            type: array
+      summary: Product Listings
+      tags:
+      - Products
+  /products/search/{page}/{key}:
+    get:
+      consumes:
+      - application/json
+      description: Product Search with pagination
+      parameters:
+      - description: Page number
+        in: path
+        name: page
+        required: true
+        type: integer
+      - description: Key string
+        in: path
+        name: key
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.Products'
+            type: array
+      summary: Products Wild Cards Search
+      tags:
+      - Products
+securityDefinitions:
+  BearerAuth:
+    description: Type "Bearer" followed by a space and your token.
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
