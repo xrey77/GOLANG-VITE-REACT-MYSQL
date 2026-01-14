@@ -3,13 +3,13 @@ import axios from "axios";
 import jQuery from 'jquery';
 
 const mfaapi = axios.create({
-  baseURL: "http://127.0.0.1:5000",
+  baseURL: "http://localhost:5000",
   headers: {'Accept': 'application/json',
             'Content-Type': 'application/json',}
 })
 
 const api = axios.create({
-  baseURL: "http://127.0.0.1:5000",
+  baseURL: "http://localhost:5000",
   headers: {'Accept': 'application/json',
           'Content-Type': 'multipart/form-data',}
 })

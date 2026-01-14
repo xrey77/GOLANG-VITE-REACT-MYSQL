@@ -2,7 +2,7 @@ import { useState } from "react";
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: "http://127.0.0.1:5000",
+  baseURL: "http://localhost:5000",
   headers: {'Accept': 'application/json',
             'Content-Type': 'application/json',
           }

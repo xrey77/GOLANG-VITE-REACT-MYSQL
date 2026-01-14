@@ -36,7 +36,7 @@ export default function Header() {
     <>
 <nav className="navbar navbar-expand-lg bg-dark">
   <div className="container-fluid">
-    <Link className="navbar-brand" to="/"><img className="logo" src="http://127.0.0.1:5000/assets/images/logo.png" alt=""/></Link>
+    <Link className="navbar-brand" to="/"><img className="logo" src="/images/logo.png" alt=""/></Link>
     <button className="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">   
       <span className="navbar-dark navbar-toggler-icon"></span>
     </button>

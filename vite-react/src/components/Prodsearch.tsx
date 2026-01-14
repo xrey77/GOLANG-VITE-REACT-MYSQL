@@ -2,7 +2,7 @@ import axios from 'axios';
 import { useState } from 'react';
 
 const api = axios.create({
-  baseURL: "http://127.0.0.1:5000",
+  baseURL: "http://localhost:5000",
   headers: {'Accept': 'application/json',
             'Content-Type': 'application/json'}
 })
@@ -27,7 +27,7 @@ export default function Prodsearch() {
   const getProdsearch = async (event: any) => {
       event.preventDefault();
       setMessage("please wait .");
-      await api.get(`products/search/${page}/${searchkey}`)
+      await api.get(`/products/search/${page}/${searchkey}`)
       .then((res: any) => {
           setProdsearch(res.data.products);
           setTotpage(res.data.totpage);
@@ -123,7 +123,7 @@ return (
               return (
               <div className='col-md-4'>
               <div key={item['id']} className="card mx-3 mt-3">
-                  <img src={item['productpicture']} className="card-img-top product-size" alt=""/>
+                  <img src={`http://localhost:5000/assets/products/${item['productpicture']}`} className="card-img-top product-size" alt=""/>
                   <div className="card-body">
                     <h5 className="card-title">Descriptions</h5>
                     <p className="card-text desc-h">{item['descriptions']}</p>

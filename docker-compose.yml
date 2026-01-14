@@ -1,0 +1,22 @@
+services:
+  backend:
+    build:
+      context: ./golang_mysql8
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - DB_HOST=host.docker.internal    
+      - DB_PORT=3306
+      - DB_USER=rey
+      - DB_PASSWORD=rey
+      - DB_NAME=golang1.24_vitereact      
+    extra_hosts:
+      - "host.docker.internal:host-gateway" # Enables access to host's localhost
+
+  frontend:
+    build:
+      context: ./vite-react
+      dockerfile: Dockerfile
+    ports:
+      - "5173:80"

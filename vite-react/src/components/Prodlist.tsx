@@ -2,7 +2,7 @@ import axios from 'axios';
 import { useState, useEffect } from 'react';
 
 const api = axios.create({
-  baseURL: "http://127.0.0.1:5000",
+  baseURL: "http://localhost:5000",
   headers: {'Accept': 'application/json',
             'Content-Type': 'application/json'}
 })
@@ -25,7 +25,7 @@ export default function Prodlist() {
     let [products, setProducts] = useState<[]>([]);
 
     const fetchProducts = (pg: any) => {
-      api.get(`products/list/${pg}`)
+      api.get(`/products/list/${pg}`)
       .then((res: any) => {
         setProducts(res.data.products);
         setTotpage(res.data.totpage);

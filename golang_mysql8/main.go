@@ -3,10 +3,10 @@ package main
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"time"
 
 	"github.com/gin-contrib/cors"
-	"github.com/gin-gonic/contrib/static"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 
@@ -15,6 +15,8 @@ import (
 	auth "src/golang_mysql8/middleware/auth"
 	products "src/golang_mysql8/middleware/products"
 	users "src/golang_mysql8/middleware/users"
+
+	"github.com/gin-gonic/contrib/static"
 
 	swaggerFiles "github.com/swaggo/files"
 	// Add the closing quote and full path below
@@ -48,18 +50,18 @@ func main() {
 
 	gin.SetMode(gin.ReleaseMode)
 	router := gin.Default()
+	router.Use(static.Serve("/jesuskingofkings", static.LocalFile("templates", true)))
+	router.Static("/assets", "./assets")
+
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"*"},
-		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD"},
+		AllowOrigins:     []string{"http://localhost:8080", "http://localhost", "http://localhost:5000", "http://localhost:5173"},
+		AllowMethods:     []string{"GET", "POST", "OPTIONS", "PUT", "PATCH", "DELETE", "HEAD"},
 		AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
 		MaxAge:           12 * time.Hour,
 	}))
-
-	router.Use(static.Serve("/", static.LocalFile("templates", true)))
-	router.Static("/assets", "./assets")
 
 	router.POST("/auth/signin", auth.Login)
 	router.POST("/auth/signup", auth.Register)
@@ -79,12 +81,13 @@ func main() {
 	router.GET("/products/list/:page", products.ProductList)
 	router.GET("/products/search/:page/:key", products.ProductSearch)
 
-	host := "http://127.0.0.1"
+	host := "0.0.0.0"
 	port := "5000"
 	address := fmt.Sprintf("%s:%s", host, port)
 	log.Print("Listening to ", address)
+	log.Fatal(http.ListenAndServe("0.0.0.0:5000", router))
 
-	if err := router.Run(":5000"); err != nil {
-		log.Fatalf("failed to run server: %v", err)
-	}
+	// if err := router.Run("127.0.0.1:5000"); err != nil {
+	// 	log.Fatalf("failed to run server: %v", err)
+	// }
 }
