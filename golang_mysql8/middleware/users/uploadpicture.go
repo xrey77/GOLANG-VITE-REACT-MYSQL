@@ -48,7 +48,7 @@ func UploadPicture(c *gin.Context) {
 		}
 
 		db := config.Connection()
-		uri := "http://127.0.0.1:5000/assets/users/" + newfile
+		uri := "http://localhost:5000/assets/users/" + newfile
 		db.Model(&models.User{}).Where("id = ?", id).Update("userpicture", uri)
 		db.Commit()
 

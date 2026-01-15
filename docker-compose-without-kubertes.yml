@@ -1,7 +1,6 @@
-version: '3.8'
+version: '3.8'  # Use 3.0 or higher
 services:
   backend:
-    image: golang-backend:v1
     build:
       context: ./golang_mysql8
       dockerfile: Dockerfile
@@ -14,12 +13,11 @@ services:
       - DB_PASSWORD=rey
       - DB_NAME=golang1.24_vitereact      
     extra_hosts:
-      - "host.docker.internal:host-gateway" 
-  
+      - "host.docker.internal:host-gateway" # Enables access to host's localhost
+
   frontend:
-    image: vitereact-frontend:v1
     build:
       context: ./vite-react
       dockerfile: Dockerfile
     ports:
-      - "5173:5173"
+      - "5173:80"

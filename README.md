@@ -16,7 +16,8 @@
 This will require your Google/Microsoft Authenticator</p>
 <p>4. Upload User's Profile Picture </p>
 <p>5. Products Listings, Catalogs pagination and Product Search</p>
-<p>6. Swagger API Documentation http://localhost:5000/swagger/index.html</p>
+<p>6. Swagger API Documentation, http://localhost:5000/swagger/index.html</p>
 <p>7. Dockerize Backend and Frontend</p>
+<p>8. Kubernetes Deployment .yaml
 
 

@@ -17,7 +17,7 @@ type User struct {
 	Password    string    `gorm:"size:255"`
 	Isactivated int       `gorm:"type:integer;default:1"`
 	Isblocked   int       `gorm:"type:integer;default:0"`
-	Userpicture string    `gorm:"default:http://127.0.0.1:9000/assets/users/pix.png"`
+	Userpicture string    `gorm:"default:http://127.0.0.1:5000/assets/users/pix.png"`
 	Mailtoken   string    `gorm:"type:integer;default:0"`
 	Secret      string    `gorm:"type:text;default:null"`
 	Qrcodeurl   string    `gorm:"type:text;default:null"`

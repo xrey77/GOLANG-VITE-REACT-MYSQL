@@ -6,14 +6,19 @@ export default defineConfig({
   plugins: [react()],
   //docker container
   server: {
-    proxy: {
-      '/api': {
-        target: 'http://localhost:5000', // Docker service name
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, '')
-      }
-    }
-  },  
+    host: '0.0.0.0',
+    port: 5173,
+  },
+  // server: {
+  //   proxy: {
+  //     '/api': {
+  //       target: 'http://localhost:5000', // Docker service name
+  //       changeOrigin: true,
+  //       rewrite: (path) => path.replace(/^\/api/, '')
+  //     }
+  //   }
+  // },  
+
   //local server
   // server: {
   //   origin: 'http://localhost:5173',

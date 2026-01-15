@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: golang-backend  # This fixes the "resource name may not be empty" error
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+      - name: backend
+        image: golang-backend:v1
+        imagePullPolicy: IfNotPresent # Force use of local image    |   #IfNotPresent  # Essential for local images
+        ports:
+        - containerPort: 5000
+        env:
+        - name: DB_HOST
+          value: "host.docker.internal"
+        - name: DB_PORT
+          value: "3306"
+        - name: DB_USER
+          value: "rey"
+        - name: DB_PASSWORD
+          value: "rey"
+        - name: DB_NAME
+          value: "golang1.24_vitereact"
+...
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: backend
+  ports:
+    - protocol: TCP
+      port: 5000      # Port exposed on localhost
+      targetPort: 5000 # Port inside the container
+
+...
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vite-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - name: frontend
+        image: vitereact-frontend:v1 # Replace with your actual image name
+        imagePullPolicy: IfNotPresent # Force use of local image |  # IfNotPresent
+        ports:
+        - containerPort: 5173
+...
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+spec:
+  type: LoadBalancer  # Required for localhost access on Docker Desktop
+  selector:
+    app: frontend
+  ports:
+    - protocol: TCP
+      port: 5173         # Port accessible on your host (localhost:5173)
+      targetPort: 80     # Port the container is listening on

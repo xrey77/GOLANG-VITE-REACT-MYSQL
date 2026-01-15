@@ -1,6 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { HashRouter, Route, Routes } from 'react-router-dom'
 import Header from './components/Header.tsx'
 import About from './components/About.tsx'
 import Home from './components/Home.tsx'
@@ -14,7 +14,7 @@ import './App.css'
 function App() {
 
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Header/>
         <Routes>
           <Route path="/" element={<Home />} />
@@ -25,7 +25,7 @@ function App() {
           <Route path="/productcatalog" element={<Prodcatalog />} />
           <Route path="/productsearch" element={<Prodsearch />} />
         </Routes>
-    </BrowserRouter>    
+    </HashRouter>    
   )
 }
 
