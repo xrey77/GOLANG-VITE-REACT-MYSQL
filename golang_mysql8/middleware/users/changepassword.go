@@ -1,11 +1,13 @@
 package middleware
 
 import (
+	"encoding/json"
 	"src/golang_mysql8/config"
 	"src/golang_mysql8/dto"
 	"src/golang_mysql8/models"
 	utils "src/golang_mysql8/util"
 
+	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 	"github.com/gin-gonic/gin"
 )
 
@@ -38,6 +40,26 @@ func ChangePassword(c *gin.Context) {
 		db := config.Connection()
 		db.Model(&models.User{}).Where("id = ?", id).Update("password", hash)
 		db.Commit()
+
+		// --- KAFKA IMPLEMENTATION ---
+		kafkaProducer, err := config.GetKafkaProducer()
+		if err == nil {
+			defer kafkaProducer.Close()
+
+			topic := "user-changepassword"
+			payload, _ := json.Marshal(map[string]string{
+				"id": user[0].Id,
+			})
+
+			kafkaProducer.Produce(&kafka.Message{
+				TopicPartition: kafka.TopicPartition{Topic: &topic, Partition: kafka.PartitionAny},
+				Value:          payload,
+			}, nil)
+
+			// Optional: Flush to ensure message is delivered
+			kafkaProducer.Flush(15 * 1000)
+		}
+
 		c.JSON(200, gin.H{"message": "Password has been changed."})
 	} else {
 		c.JSON(400, gin.H{"message": "User ID not found."})

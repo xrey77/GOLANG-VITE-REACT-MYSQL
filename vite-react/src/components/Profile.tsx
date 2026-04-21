@@ -40,7 +40,8 @@ export default function Profile() {
             setFname(res.data[0].firstname); 
             setEmail(res.data[0].email);
             setMobile(res.data[0].mobile);
-            setUserpicture(res.data[0].userpicture);
+            let userpic: string = `http://localhost:5000/assets/users/${res.data[0].userpicture}`;
+            setUserpicture(userpic);
             setQrcodeurl(res.data[0].qrcodeurl);     
 
             if (res.data[0].qrcodeurl !== null) {
@@ -123,7 +124,8 @@ export default function Profile() {
             .then((res: any) => {
                 setProfileMsg(res.data.message);
                 setTimeout(() => {
-                    sessionStorage.setItem('USERPIC',res.data.userpic)
+                    let userpic: string = `http://localhost:5000/assets/users/${res.data.userpic}`;
+                    sessionStorage.setItem('USERPIC', userpic)
                     setProfileMsg('');
                     location.reload();
                 },3000);
@@ -288,13 +290,7 @@ export default function Profile() {
                         <input className="form-control bg-warning border-primary mt-2" id="email" name="email" type="email" value={email} onChange={e => setEmail(e.target.value)} readOnly />
                     </div>
                     <div className='col'>
-                        {
-                            userpicture == null ? (
-                                <img id="userpic" className="userpic" alt="" />
-                            )
-                            :
-                            <img id="userpic" src={userpicture} className="userpic" alt="" />
-                        }
+                        <img id="userpic" src={userpicture} className="userpic" alt="" />
                     </div>
                 </div>
 
@@ -323,9 +319,9 @@ export default function Profile() {
                                         <div className='col-5'>
                                             <img id="googleAuth" src={qrcodeurl} className="qrCode2" alt="QRCODE" />
                                         </div>
-                                        <div className='col-7'>
+                                        <div className='col-7   '>
                                             <p className='text-danger mfa-pos-1'><strong>Requirements</strong></p>
-                                            <p className="mfa-pos-2">You need to install <strong>Google or Microsoft Authenticator</strong> in your Mobile Phone, once installed, click Enable Button below, and <strong>SCAN QR CODE</strong>, next time you login, another dialog window will appear, then enter the <strong>OTP CODE</strong> from your Mobile Phone in order for you to login.</p>
+                                            <p className="mfa-pos-2 qrlabel-size">You need to install <strong>Google or Microsoft Authenticator</strong> in your Mobile Phone, once installed, click Enable Button below, and <strong>SCAN QR CODE</strong>, next time you login, another dialog window will appear, then enter the <strong>OTP CODE</strong> from your Mobile Phone in order for you to login.</p>
                                             <button onClick={enableMFA} type="button" className='btn btn-primary mfa-btn-1 mx-1'>enable</button>
                                             <button onClick={disableMFA} type="button" className='btn btn-secondary mfa-btn-2'>disable</button>
                                         </div>

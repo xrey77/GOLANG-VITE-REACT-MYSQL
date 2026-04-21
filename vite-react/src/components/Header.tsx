@@ -56,6 +56,20 @@ export default function Header() {
             <li><Link className="dropdown-item" to="/productsearch">Product Search</Link></li>
           </ul>
         </li>
+
+        <li className="nav-item dropdown">
+          <a className="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Reports
+          </a>
+          <ul className="dropdown-menu">
+            <li><Link className="dropdown-item" to="/pdfreports">Products Summary Report-PDF</Link></li>
+            <li><Link className="dropdown-item" to="/saleschart">Annual Sales Graph Report</Link></li>
+            <li><hr className="dropdown-divider"/></li>
+            <li><Link className="dropdown-item" to="/productbycategory">Product by Category-Master/Details</Link></li>
+          </ul>
+        </li>
+
+
         <li className="nav-item">
           <Link className="nav-link text-white" to="/contact">Contact Us</Link>
         </li>
@@ -112,6 +126,23 @@ export default function Header() {
               <Link className="dropdown-item" to="/productsearch">Product Search</Link></li>
           </ul>
         </li>
+
+        <li><hr/></li>
+        <li className="nav-item dropdown">
+          <Link className="nav-link dropdown-toggle text-dark embossed" to="/#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Reports
+          </Link>
+          <ul className="dropdown-menu">
+            <li data-bs-dismiss="offcanvas">
+              <Link className="dropdown-item" to="/pdfreports">Products Summary Report</Link></li>
+            <li data-bs-dismiss="offcanvas">
+              <Link className="dropdown-item" to="/saleschart">Annual Sales Chart</Link></li>
+            <li><hr className="dropdown-divider"/></li>
+            <li data-bs-dismiss="offcanvas">
+              <Link className="dropdown-item" to="/productbycategory">Product by Category Report</Link></li>
+          </ul>
+        </li>
+
         <li><hr/></li>
   
         <li className="nav-item" data-bs-dismiss="offcanvas">

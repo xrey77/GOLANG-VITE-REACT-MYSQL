@@ -24,12 +24,13 @@ export default function Login() {
     const jsonData =JSON.stringify({ username: username, password: password });
     await api.post("auth/signin", jsonData)
     .then((res: any) => {
+            let userpic: string = `http://localhost:5000/assets/users/${res.data.userpic}`;
             setMessage(res.data.message);
             if (res.data.qrcodeurl !== null) {
                 window.sessionStorage.setItem('USERID',res.data.id);
                 window.sessionStorage.setItem('TOKEN',res.data.token);
                 window.sessionStorage.setItem('ROLE',res.data.roles);
-                window.sessionStorage.setItem('USERPIC',res.data.userpic);
+                window.sessionStorage.setItem('USERPIC', userpic);
                 jQuery("#loginReset").trigger("click");
                 setIsdisabled(false);
                 jQuery("#mfaModal").trigger("click");
@@ -38,7 +39,7 @@ export default function Login() {
                 window.sessionStorage.setItem('USERNAME',res.data.username);
                 window.sessionStorage.setItem('TOKEN',res.data.token);                        
                 window.sessionStorage.setItem('ROLE',res.data.roles);
-                window.sessionStorage.setItem('USERPIC',res.data.userpic);
+                window.sessionStorage.setItem('USERPIC', userpic);
                 setIsdisabled(false);
                 jQuery("#loginReset").trigger('"click')
                 closeLogin;

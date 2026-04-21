@@ -9,6 +9,9 @@ import Prodlist from './components/Prodlist.tsx';
 import Prodcatalog from './components/Prodcatalog.tsx';
 import Prodsearch from './components/Prodsearch.tsx';
 import Profile from './components/Profile.tsx';
+import SalesChart from './components/SalesChart.tsx';
+import PdfReports from './components/PdfReports.tsx';
+import ProductbyCategory from './components/ProductbyCategory.tsx';
 import './App.css'
 
 function App() {
@@ -24,6 +27,11 @@ function App() {
           <Route path="/productlist" element={<Prodlist />} />
           <Route path="/productcatalog" element={<Prodcatalog />} />
           <Route path="/productsearch" element={<Prodsearch />} />
+          <Route path="/pdfreports" element={<PdfReports />} />
+          <Route path="/saleschart" element={<SalesChart />} />
+          <Route path="/productbycategory" element={<ProductbyCategory />} />
+
+
         </Routes>
     </HashRouter>    
   )

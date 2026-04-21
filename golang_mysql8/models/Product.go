@@ -22,4 +22,7 @@ type Product struct {
 	Criticalstocks int             `gorm:"type:integer;default:0"`
 	CreatedAt      time.Time       `gorm:"default:CURRENT_TIMESTAMP(3)"`
 	UpdatedAt      time.Time       `gorm:"default:CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)"`
+	Category_id    int             `gorm:"type:integer"`
+
+	Categories []Category `gorm:"many2many:product_categories;"`
 }

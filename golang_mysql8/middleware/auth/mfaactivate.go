@@ -11,6 +11,7 @@ import (
 	"src/golang_mysql8/models"
 	utils "src/golang_mysql8/util"
 
+	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 	"github.com/gin-gonic/gin"
 	"github.com/pquerna/otp/totp"
 	qrcode "github.com/skip2/go-qrcode"
@@ -36,7 +37,7 @@ func MfaActivate(c *gin.Context) {
 	}
 	db := config.Connection()
 
-	if user.TwoFactoEnabled {
+	if user.TwoFactorEnabled {
 		user, err := utils.GetByUserId(id)
 		if err != nil {
 			c.JSON(400, gin.H{"message": err.Error()})
@@ -45,16 +46,15 @@ func MfaActivate(c *gin.Context) {
 
 		if len(user) > 0 {
 			key, err := totp.Generate(totp.GenerateOpts{
-				Issuer:      "BARCLAYS BANK", // The name of your application
-				AccountName: user[0].Email,   // The user's account identifier
+				Issuer:      "BARCLAYS BANK",
+				AccountName: user[0].Email,
 			})
 			if err != nil {
 				c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate TOTP secret"})
 				return
 			}
-			// The key.Secret() is the base32 encoded secret you must save
+
 			secret := key.Secret()
-			// The key.URL() is the otpauth URI, which can be converted into a QR code
 			qrCodeURL := key.URL()
 
 			pngBytes, err := qrcode.Encode(qrCodeURL, qrcode.Medium, 256)
@@ -62,15 +62,33 @@ func MfaActivate(c *gin.Context) {
 				c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Failed to generate QR code: %v", err)})
 				return
 			}
-			// 3. Base64 encode the PNG bytes
+
 			var mfaData dto.MfaData
-			// "data:image/png;base64,
 			base64Encoded := base64.StdEncoding.EncodeToString(pngBytes)
 			mfaData.Secret = secret
 			mfaData.Qrcodeurl = string(base64Encoded)
 
 			db.Model(&models.User{}).Where("id = ?", id).Updates(mfaData)
 			db.Commit()
+
+			// --- KAFKA IMPLEMENTATION ---
+			kafkaProducer, err := config.GetKafkaProducer()
+			if err == nil {
+				defer kafkaProducer.Close()
+
+				topic := "user-activatemfa"
+				payload, _ := json.Marshal(map[string]string{
+					"id": user[0].Id,
+				})
+
+				kafkaProducer.Produce(&kafka.Message{
+					TopicPartition: kafka.TopicPartition{Topic: &topic, Partition: kafka.PartitionAny},
+					Value:          payload,
+				}, nil)
+
+				// Optional: Flush to ensure message is delivered
+				kafkaProducer.Flush(15 * 1000)
+			}
 
 			c.JSON(200, gin.H{
 				"qrcodeurl": base64Encoded,
@@ -79,6 +97,25 @@ func MfaActivate(c *gin.Context) {
 		}
 
 	} else {
+
+		// --- KAFKA IMPLEMENTATION ---
+		kafkaProducer, err := config.GetKafkaProducer()
+		if err == nil {
+			defer kafkaProducer.Close()
+
+			topic := "user-activatemfa"
+			payload, _ := json.Marshal(map[string]string{
+				"id": id,
+			})
+
+			kafkaProducer.Produce(&kafka.Message{
+				TopicPartition: kafka.TopicPartition{Topic: &topic, Partition: kafka.PartitionAny},
+				Value:          payload,
+			}, nil)
+
+			// Optional: Flush to ensure message is delivered
+			kafkaProducer.Flush(15 * 1000)
+		}
 
 		db.Model(&models.User{}).Where("id = ?", id).Update("qrcodeurl", nil)
 		db.Commit()

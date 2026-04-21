@@ -1,10 +1,12 @@
 package middleware
 
 import (
+	"encoding/json"
 	"net/http"
 	"src/golang_mysql8/config"
 	"src/golang_mysql8/dto"
 
+	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 	"github.com/gin-gonic/gin"
 	"github.com/pquerna/otp/totp"
 )
@@ -43,9 +45,29 @@ func MfaVerifyotp(c *gin.Context) {
 
 		valid := totp.Validate(mfa.Otp, *secret)
 		if valid {
+
+			// --- KAFKA IMPLEMENTATION ---
+			kafkaProducer, err := config.GetKafkaProducer()
+			if err == nil {
+				defer kafkaProducer.Close()
+
+				topic := "user-verifytotp"
+				payload, _ := json.Marshal(map[string]string{
+					"id": users[0].Id,
+				})
+
+				kafkaProducer.Produce(&kafka.Message{
+					TopicPartition: kafka.TopicPartition{Topic: &topic, Partition: kafka.PartitionAny},
+					Value:          payload,
+				}, nil)
+
+				// Optional: Flush to ensure message is delivered
+				kafkaProducer.Flush(15 * 1000)
+			}
+
 			c.JSON(200, gin.H{
 				"username": users[0].Username,
-				"message":  "OTP code is successfully validated.s"})
+				"message":  "OTP code is successfully validated."})
 			return
 		} else {
 			c.JSON(http.StatusUnauthorized, gin.H{"message": "Invalid OTP code, please try again."})

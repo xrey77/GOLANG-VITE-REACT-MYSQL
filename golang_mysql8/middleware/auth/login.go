@@ -1,11 +1,13 @@
 package middleware
 
 import (
+	"encoding/json"
 	"errors"
 	"src/golang_mysql8/config"
 	"src/golang_mysql8/dto"
 	utils "src/golang_mysql8/util"
 
+	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
@@ -49,6 +51,28 @@ func Login(c *gin.Context) {
 			var rolesName string
 			if roleDto != nil {
 				rolesName = roleDto.Name
+			}
+
+			// --- KAFKA IMPLEMENTATION ---
+			kafkaProducer, err := config.GetKafkaProducer()
+			if err == nil {
+				defer kafkaProducer.Close()
+
+				topic := "user-login"
+				payload, _ := json.Marshal(map[string]string{
+					"firstname": user.Firstname,
+					"lastname":  user.Lastname,
+					"username":  user.Username,
+					"email":     user.Email,
+				})
+
+				kafkaProducer.Produce(&kafka.Message{
+					TopicPartition: kafka.TopicPartition{Topic: &topic, Partition: kafka.PartitionAny},
+					Value:          payload,
+				}, nil)
+
+				// Optional: Flush to ensure message is delivered
+				kafkaProducer.Flush(15 * 1000)
 			}
 
 			c.JSON(200, gin.H{

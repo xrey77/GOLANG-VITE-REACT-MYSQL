@@ -1,9 +1,11 @@
 package middleware
 
 import (
+	"encoding/json"
 	"src/golang_mysql8/config"
 	"src/golang_mysql8/dto"
 
+	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 	"github.com/gin-gonic/gin"
 )
 
@@ -24,9 +26,28 @@ func GetUserid(c *gin.Context) {
 	db := config.Connection()
 	result := db.Where("id = ?", id).Find(&user)
 	if result.Error != nil {
-		// GORM returns ErrRecordNotFound if nothing is found
 		c.JSON(404, gin.H{"message": "User ID not found."})
 		return
+	}
+
+	// --- KAFKA IMPLEMENTATION ---
+	kafkaProducer, err := config.GetKafkaProducer()
+	if err == nil {
+		defer kafkaProducer.Close()
+
+		topic := "user-getid"
+		payload, _ := json.Marshal(map[string]string{
+			"id":        user[0].Id,
+			"firstname": user[0].Firstname,
+		})
+
+		kafkaProducer.Produce(&kafka.Message{
+			TopicPartition: kafka.TopicPartition{Topic: &topic, Partition: kafka.PartitionAny},
+			Value:          payload,
+		}, nil)
+
+		// Optional: Flush to ensure message is delivered
+		kafkaProducer.Flush(15 * 1000)
 	}
 
 	c.JSON(200, user)

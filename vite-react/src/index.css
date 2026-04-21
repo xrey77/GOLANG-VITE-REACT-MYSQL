@@ -287,3 +287,6 @@ body {
   padding: 15px;
   background-color: #ddd; /* Background color helps the effect stand out */  
  }
+
+ .qrlabel-size {
+  font-size: 11px !important

@@ -9,10 +9,10 @@ type Users struct {
 	Username    string  `json:"username"`
 	Password    string  `json:"password"`
 	Roles       string  `json:"roles"`
-	Isactivated string  `json:"isactivated"`
-	Isblocked   string  `json:"isblocked"`
+	Isactivated int     `json:"isactivated"`
+	Isblocked   int     `json:"isblocked"`
 	Userpicture string  `json:"userpicture"`
-	Mailtoken   string  `json:"mailtoken"`
+	Mailtoken   int     `json:"mailtoken"`
 	Qrcodeurl   *string `json:"qrcodeurl"`
 	Secret      *string `json:"secret"`
 }

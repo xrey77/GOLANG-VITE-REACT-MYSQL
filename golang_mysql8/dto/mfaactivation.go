@@ -1,5 +1,5 @@
 package dto
 
 type MfaActivation struct {
-	TwoFactoEnabled bool `json:"TwoFactorEnabled"`
+	TwoFactorEnabled bool `json:"TwoFactorEnabled"`
 }

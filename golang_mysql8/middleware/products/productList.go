@@ -1,12 +1,14 @@
 package middleware
 
 import (
+	"encoding/json"
 	"math"
 	"src/golang_mysql8/config"
 	"src/golang_mysql8/dto"
 	"src/golang_mysql8/models"
 	"strconv"
 
+	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 	"github.com/gin-gonic/gin"
 )
 
@@ -35,6 +37,25 @@ func ProductList(c *gin.Context) {
 	var prods []dto.Products
 
 	db.Limit(perPage).Offset(offset).Find(&prods)
+
+	// --- KAFKA IMPLEMENTATION ---
+	kafkaProducer, err := config.GetKafkaProducer()
+	if err == nil {
+		defer kafkaProducer.Close()
+
+		topic := "user-registrations"
+		payload, _ := json.Marshal(map[string]string{
+			"products": prods[0].Id,
+		})
+
+		kafkaProducer.Produce(&kafka.Message{
+			TopicPartition: kafka.TopicPartition{Topic: &topic, Partition: kafka.PartitionAny},
+			Value:          payload,
+		}, nil)
+
+		// Optional: Flush to ensure message is delivered
+		kafkaProducer.Flush(15 * 1000)
+	}
 
 	c.JSON(200, gin.H{
 		"page":         page,

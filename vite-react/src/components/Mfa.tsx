@@ -11,12 +11,14 @@ const api = axios.create({
 export default function Mfa() {
   const [otp, setOtp] = useState<string>('');
   const [message, setMessage] = useState<string>('');
+    const [isdisabled, setIsdisabled] = useState<boolean>(false);
 
   const submitMfa = (event: any) => {
     event.preventDefault();
-
+    setIsdisabled(true);
     const userid = sessionStorage.getItem('USERID');
     const token = sessionStorage.getItem('TOKEN');
+
     setMessage('please wait..');
     const jsonData =JSON.stringify({otp: otp });
     api.patch(`api/mfa/verifytotp/${userid}`, jsonData, {headers: {
@@ -38,6 +40,7 @@ export default function Mfa() {
             }
             window.setTimeout(() => {
               setMessage('');
+              setIsdisabled(false);
             }, 3000);
             return;
     });        
@@ -59,16 +62,16 @@ export default function Mfa() {
       <div className="modal-dialog modal-sm modal-dialog-centered">
         <div className="modal-content">
           <div className="modal-header bg-info">
-            <h1 className="modal-title fs-5 text-dark" id="staticMfaLabel">Multi-Factor Authenticator</h1>
+            <div className="modal-title fs-5 text-dark" id="staticMfaLabel">Multi-Factor Authenticator</div>
             <button onClick={closeMfa} type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div className="modal-body">
           <form onSubmit={submitMfa} autoComplete="off">
             <div className="mb-3">
-              <input type="text" required value={otp} onChange={e => setOtp(e.target.value)} className="form-control border-dark" id="otp" placeholder="enter 6-digin OTP code"/>
+              <input type="text" required value={otp} onChange={e => setOtp(e.target.value)} className="form-control border-dark" id="otp" placeholder="enter 6-digin OTP code" disabled={isdisabled}/>
             </div>          
             <div className="mb-3">
-              <button type="submit" className="btn btn-info mx-2 text-dark">submit</button>
+              <button type="submit" className="btn btn-info mx-2 text-dark" disabled={isdisabled}>submit</button>
               <button type="reset" className="btn btn-info text-dark">reset</button>
             </div>
           </form>            
