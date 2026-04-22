@@ -1,4 +1,4 @@
-<h3>Go 1.25.8 + Gin Gonic, Apache Kafka integration <br/>Vite 8.0.9 + React 19.2.5 and MySql / MariaDb Start-up Project</h3>
+<h3>Go 1.25.8 + Gin Gonic, Apache Kafka integration and HtppTest Framwork<br/>Vite 8.0.9 + React 19.2.5 and MySql / MariaDb Start-up Project</h3>
 
 <p styles="font-size:24px;">React Dependencies</p>
 <p>1. Node 24.13.1</p>
@@ -22,5 +22,10 @@ This will require your Google/Microsoft Authenticator</p>
 <p>9. Swagger API Documentation, http://localhost:5000/swagger/index.html</p>
 <p>10. Dockerize Backend and Frontend</p>
 <p>11. Kubernetes Deployment .yaml
+<br/><br/>
+<p>For Testing. Execute</p>
+<p>go test</p>
+<p>go test -v</p>
+<p>go test -mod=mod</p>
 
 

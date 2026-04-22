@@ -60,7 +60,7 @@ func ChangePassword(c *gin.Context) {
 			kafkaProducer.Flush(15 * 1000)
 		}
 
-		c.JSON(200, gin.H{"message": "Password has been changed."})
+		c.JSON(200, gin.H{"message": "You have changed your password successfully."})
 	} else {
 		c.JSON(400, gin.H{"message": "User ID not found."})
 	}

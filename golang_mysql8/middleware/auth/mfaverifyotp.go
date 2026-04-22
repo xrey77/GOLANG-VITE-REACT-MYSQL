@@ -62,7 +62,8 @@ func MfaVerifyotp(c *gin.Context) {
 				}, nil)
 
 				// Optional: Flush to ensure message is delivered
-				kafkaProducer.Flush(15 * 1000)
+				// kafkaProducer.Flush(15 * 1000)
+				kafkaProducer.Flush(15 * 100)
 			}
 
 			c.JSON(200, gin.H{
